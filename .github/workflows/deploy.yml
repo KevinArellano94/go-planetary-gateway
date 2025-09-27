@@ -7,29 +7,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      SVC_ID: my-service-id
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-
-      - name: Install dependencies
-        run: go mod tidy
-
-      - name: Build
-        run: go build -v ./...
-
-      # - name: Test
-      #   run: go test -v ./...
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: bcd801a0-b25d-4c89-bad3-5207740ce5d4
-        run: railway up --service 20dc59b1-0fc2-4e67-9143-70a11519f568 --detach
+      - uses: actions/checkout@v3
+      - run: railway up --service=${{ env.SVC_ID }}
